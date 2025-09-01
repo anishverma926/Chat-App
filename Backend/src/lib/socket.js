@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
+import User from "../models/user.model.js"; // <-- import model
 
 const app = express();
 const server = http.createServer(app);
@@ -15,6 +16,11 @@ export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
 }
 
+// NEW: helper to check presence from routes/controllers
+export function isUserOnline(userId) {
+  return Boolean(userSocketMap[userId]);
+}
+
 // used to store online users
 const userSocketMap = {}; // {userId: socketId}
 
@@ -27,9 +33,20 @@ io.on("connection", (socket) => {
   // io.emit() is used to send events to all the connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
     console.log("A user disconnected", socket.id);
-    delete userSocketMap[userId];
+
+    if (userId) {
+      delete userSocketMap[userId];
+
+      // NEW: persist last seen
+      try {
+        await User.findByIdAndUpdate(userId, { lastSeen: new Date() });
+      } catch (e) {
+        console.error("Failed to update lastSeen:", e.message);
+      }
+    }
+
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
