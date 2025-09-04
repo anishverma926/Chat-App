@@ -11,7 +11,7 @@ import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import { app, server } from "./lib/socket.js";
 
-import userRoutes from "./routes/user.route.js";
+// import userRoutes from "./routes/user.route.js";
 
 dotenv.config();
 const PORT = process.env.PORT;
