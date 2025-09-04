@@ -19,7 +19,7 @@ const __dirname = path.resolve();
 
 // app.use(express.json());
 
-const ORIGIN = process.env.CLIENT_URL || "http://localhost:5173";
+const ORIGIN = process.env.CLIENT_URL || "https://realtime-chat-app-crfj.onrender.com/";
 
 app.use(
   cors({
