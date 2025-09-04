@@ -19,14 +19,27 @@ const __dirname = path.resolve();
 
 // app.use(express.json());
 
-const ORIGIN = process.env.CLIENT_URL || "http://localhost:5173";
+const allowedOrigins = [
+  process.env.CLIENT_URL,      // frontend on Render
+  "http://localhost:5173",     // local dev frontend
+];
 
 app.use(
   cors({
-    origin: ORIGIN,
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // allow Postman, curl
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"), false);
+      }
+    },
     credentials: true,
   })
 );
+
+app.options("*", cors()); // handle preflight requests
+
 
 
 // ✅ Parse JSON with bigger limit (to allow profile pics)
