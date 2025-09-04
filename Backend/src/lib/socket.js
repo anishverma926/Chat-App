@@ -15,6 +15,12 @@ export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
 }
 
+// helper to check if user is online
+export function isUserOnline(userId) {
+  return Boolean(userSocketMap[userId]);
+}
+
+
 // used to store online users
 const userSocketMap = {}; // {userId: socketId}
 
